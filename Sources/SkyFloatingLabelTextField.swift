@@ -95,6 +95,13 @@ open class SkyFloatingLabelTextField: UITextField {
         }
     }
 
+    /// A UIColor value that determines the color used for the title label and the line when the success boolean is not `false`
+    @IBInspectable open var successColor:UIColor = UIColor.green {
+        didSet {
+            self.updateColors()
+        }
+    }
+
     /// A UIColor value that determines the text color of the title label when editing
     @IBInspectable open var selectedTitleColor:UIColor = UIColor.blue {
         didSet {
@@ -191,6 +198,14 @@ open class SkyFloatingLabelTextField: UITextField {
     open var hasErrorMessage:Bool {
         get {
             return self.errorMessage != nil && self.errorMessage != ""
+        }
+    }
+
+
+    /// A Boolean value for the success message to display.
+    open var showSuccess:Bool? {
+        get {
+            return false
         }
     }
 
@@ -361,7 +376,12 @@ open class SkyFloatingLabelTextField: UITextField {
         if self.hasErrorMessage {
             self.lineView.backgroundColor = self.errorColor
         } else {
-            self.lineView.backgroundColor = self.editingOrSelected ? self.selectedLineColor : self.lineColor
+            if self.showSuccess {
+                self.lineView.backgroundColor = self.successColor
+            } else {
+                self.lineView.backgroundColor = self.editingOrSelected ? self.selectedLineColor : self.lineColor
+
+            }
         }
     }
 
@@ -369,11 +389,16 @@ open class SkyFloatingLabelTextField: UITextField {
         if self.hasErrorMessage {
             self.titleLabel.textColor = self.errorColor
         } else {
-            if self.editingOrSelected || self.isHighlighted {
-                self.titleLabel.textColor = self.selectedTitleColor
+            if self.showSuccess {
+                self.titleLabel.textColor = self.successColor
             } else {
-                self.titleLabel.textColor = self.titleColor
+                if self.editingOrSelected || self.isHighlighted {
+                    self.titleLabel.textColor = self.selectedTitleColor
+                } else {
+                    self.titleLabel.textColor = self.titleColor
+                }
             }
+
         }
     }
 
@@ -381,7 +406,11 @@ open class SkyFloatingLabelTextField: UITextField {
         if self.hasErrorMessage {
             super.textColor = self.errorColor
         } else {
-            super.textColor = self.cachedTextColor
+            if self.showSuccess {
+                super.textColor = self.successColor
+            } else {
+                super.textColor = self.cachedTextColor
+            }
         }
     }
 
